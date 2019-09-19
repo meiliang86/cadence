@@ -151,6 +151,7 @@ type (
 	Queue interface {
 		EnqueueMessage(messagePayload []byte) error
 		DequeueMessages(lastMessageID int, maxCount int) ([]*QueueMessage, error)
+		DeleteMessagesBefore(messageID int) error
 	}
 
 	// QueueMessage is the message that stores in the queue

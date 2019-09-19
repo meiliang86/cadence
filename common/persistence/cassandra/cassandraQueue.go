@@ -40,6 +40,7 @@ const (
 	templateEnqueueMessageQuery   = `INSERT INTO queue (queue_type, message_id, message_payload) VALUES(?, ?, ?) IF NOT EXISTS`
 	templateGetLastMessageIDQuery = `SELECT message_id FROM queue WHERE queue_type=? ORDER BY message_id DESC LIMIT 1`
 	templateGetMessagesQuery      = `SELECT message_id, message_payload FROM queue WHERE queue_type = ? and message_id > ? LIMIT ?`
+	templateDeleteMessagesQuery   = `DELETE FROM queue WHERE queue_type = ? and message_id < ?`
 )
 
 type (
@@ -170,6 +171,17 @@ func (q *cassandraQueue) DequeueMessages(
 	}
 
 	return result, nil
+}
+
+func (q *cassandraQueue) DeleteMessagesBefore(messageID int) error {
+	query := q.session.Query(templateDeleteMessagesQuery, q.queueType, messageID)
+	if err := query.Exec(); err != nil {
+		return &workflow.InternalServiceError{
+			Message: fmt.Sprintf("DeleteMessagesBefore operation failed. Error %v", err),
+		}
+	}
+
+	return nil
 }
 
 func (q *cassandraQueue) Close() error {

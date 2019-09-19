@@ -85,6 +85,16 @@ func (q *sqlQueue) DequeueMessages(lastMessageID, maxCount int) ([]*persistence.
 	return messages, nil
 }
 
+func (q *sqlQueue) DeleteMessagesBefore(messageID int) error {
+	_, err := q.db.DeleteMessages(q.queueType, messageID)
+	if err != nil {
+		return &workflow.InternalServiceError{
+			Message: fmt.Sprintf("DeleteMessagesBefore operation failed. Error %v", err),
+		}
+	}
+	return nil
+}
+
 func newQueueRow(queueType int, messageID int, payload []byte) *sqldb.QueueRow {
 	return &sqldb.QueueRow{QueueType: queueType, MessageID: messageID, MessagePayload: payload}
 }
