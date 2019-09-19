@@ -100,4 +100,12 @@ func (s *QueuePersistenceSuite) TestDomainReplicationQueue() {
 	s.Len(result, numMessages)
 	s.Equal(numMessages-1, lastRetrievedMessageID)
 
+	messagesToDelete := 10
+	err = s.DeleteMessagesBefore(messagesToDelete)
+	s.Nil(err, "DeleteMessagesBefore failed.")
+
+	result, lastRetrievedMessageID, err = s.GetReplicationMessages(-1, numMessages)
+	s.Nil(err, "GetReplicationMessages failed.")
+	s.Len(result, numMessages-messagesToDelete)
+	s.Equal(numMessages-1, lastRetrievedMessageID)
 }

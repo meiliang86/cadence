@@ -1381,6 +1381,11 @@ func (s *TestBase) GetReplicationMessages(lastMessageID int, maxCount int) ([]*r
 	return s.DomainReplicationQueue.GetReplicationMessages(lastMessageID, maxCount)
 }
 
+// DeleteMessagesBefore is a utility method to delete messages from the queue
+func (s *TestBase) DeleteMessagesBefore(messageID int) error {
+	return s.DomainReplicationQueue.DeleteMessagesBefore(messageID)
+}
+
 // GenerateTransferTaskIDs helper
 func (g *TestTransferTaskIDGenerator) GenerateTransferTaskIDs(number int) ([]int64, error) {
 	result := []int64{}

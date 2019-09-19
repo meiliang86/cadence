@@ -1236,3 +1236,17 @@ func (p *queuePersistenceClient) DequeueMessages(lastMessageID int, maxCount int
 
 	return result, err
 }
+
+func (p *queuePersistenceClient) DeleteMessagesBefore(messageID int) error {
+	p.metricClient.IncCounter(metrics.PersistenceDeleteMessagesScope, metrics.PersistenceRequests)
+
+	sw := p.metricClient.StartTimer(metrics.PersistenceDeleteMessagesScope, metrics.PersistenceLatency)
+	err := p.persistence.DeleteMessagesBefore(messageID)
+	sw.Stop()
+
+	if err != nil {
+		p.metricClient.IncCounter(metrics.PersistenceDeleteMessagesScope, metrics.PersistenceFailures)
+	}
+
+	return err
+}

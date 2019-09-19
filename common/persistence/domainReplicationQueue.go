@@ -81,3 +81,8 @@ func (q *domainReplicationQueueImpl) GetReplicationMessages(
 
 	return replicationTasks, lastMessageID, nil
 }
+
+
+func (q *domainReplicationQueueImpl) DeleteMessagesBefore(messageID int) error {
+	return q.queue.DeleteMessagesBefore(messageID)
+}

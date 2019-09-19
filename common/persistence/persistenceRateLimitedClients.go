@@ -790,3 +790,11 @@ func (p *queueRateLimitedPersistenceClient) DequeueMessages(lastMessageID int, m
 
 	return p.persistence.DequeueMessages(lastMessageID, maxCount)
 }
+
+func (p *queueRateLimitedPersistenceClient) DeleteMessagesBefore(messageID int) error {
+	if ok := p.rateLimiter.Allow(); !ok {
+		return ErrPersistenceLimitExceeded
+	}
+
+	return p.persistence.DeleteMessagesBefore(messageID)
+}
